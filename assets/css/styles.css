@@ -1,0 +1,41 @@
+/* Dark Mode Customization */
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+.container {
+    margin-top: 30px;
+}
+.table th, .table td {
+    text-align: center;
+}
+.table-dark td, .table-dark th {
+    color: #ffffff;
+}
+
+/* Modal Customization */
+.modal-content {
+    background-color: #333;
+    color: #ffffff;
+}
+.modal-header, .modal-body, .modal-footer {
+    color: #ffffff;
+}
+.modal-body input, .modal-body select {
+    background-color: #444;
+    color: #ffffff;
+}
+.modal-body input::placeholder, .modal-body select {
+    color: #bdbdbd;
+}
+.modal-body label {
+    color: #ffffff;
+}
+
+/* Center the modal */
+/* .modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+} */

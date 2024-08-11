@@ -1,16 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Login</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
+<?php require_once('includes/header.php'); ?>
+
+        <div class="container d-flex justify-content-center">
+    <div class='m-8 w-50 '>
+        
         <h2 class="mt-5">User Login</h2>
-        <form action="../controllers/UserController.php?action=login" method="post" class="mt-3">
+        <form action="index.php?action=login" method="post" class="mt-3">
             <div class="form-group">
                 <label for="username">Username:</label>
                 <input type="text" class="form-control" id="username" name="username" required>
@@ -23,5 +17,6 @@
         </form>
         <p class="mt-3">Don't have an account? <a href="signup.php">Sign Up</a></p>
     </div>
-</body>
-</html>
+    </div>
+    <?php require_once('includes/footer.php'); ?>
+

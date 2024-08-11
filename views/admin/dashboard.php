@@ -1,19 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
-        <h2 class="mt-5">Welcome Admin!</h2>
-        <p class="mt-3">This is your dashboard. You can manage users here.</p>
-        <a href="manage_users.php" class="btn btn-primary">Manage Users</a>
-        <br><br>
-        <a href="../controllers/AdminController.php?action=logout" class="btn btn-secondary">Logout</a>
+<?php require_once('../../includes/header.php'); ?>
+
+    <div class="container d-flex justify-content-center">
+        <div class='m-8'>
+            <h2 class="mt-5">Welcome Admin!</h2>
+            <p class="mt-3">This is your dashboard. You can manage users here.</p>
+            <a href="signup.php" class="btn btn-secondary">Add user Users</a>
+            
+            <form action="../../index.php?action=view_users" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-secondary">All Users</button>
+            </form>
+            
+            <br><br>
+            <form action="../../index.php?action=logout" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-secondary">Logout</button>
+            </form>
+        </div>
     </div>
-</body>
-</html>
+
+<?php require_once('../../includes/footer.php'); ?>

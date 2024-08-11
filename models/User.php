@@ -6,10 +6,10 @@ class User {
         $this->db = $db;
     }
 
-    public function createUser($username, $email, $password) {
+    public function createUser($type, $username, $email, $password) {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $this->db->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-        $stmt->execute([$username, $email, $hashedPassword]);
+        $stmt = $this->db->prepare("INSERT INTO users (type, username, email, password) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$type, $username, $email, $hashedPassword]);
         return $stmt->rowCount();
     }
 
@@ -32,4 +32,4 @@ class User {
         return $stmt->rowCount();
     }
 }
-?>
+

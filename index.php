@@ -1,6 +1,9 @@
 <?php
+// Start the session
+session_start();
+
 // Include necessary files
-require_once('includes/db.php');
+require_once(__DIR__ . '/includes/db.php');
 
 // Define the routes and their corresponding controllers and actions
 $routes = [
@@ -14,115 +17,148 @@ $routes = [
 // Get the action parameter from the URL (if exists)
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
+// Define a function to check if the user is logged in
+function isUserLoggedIn() {
+    return isset($_SESSION['user_id']);
+}
+
+// Define a function to check if the admin is logged in
+function isAdminLoggedIn() {
+    return isset($_SESSION['admin_id']);
+}
+
 // Route the request based on the action parameter
 switch ($action) {
     case 'login':
-    case 'signup':
-        // If action is related to user, route to UserController
         require_once('controllers/UserController.php');
         $userController = new UserController();
 
-        // Handle the requested action
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($action === 'login') {
-                // Process login request
                 $username = $_POST['username'] ?? '';
                 $password = $_POST['password'] ?? '';
                 $result = $userController->login($username, $password);
-                // Check the login result
-                if ($result === "Login successful") {
-                    // Redirect to user dashboard
-                    header('Location: user/dashboard.php');
-                    exit();
-                } else {
-                    // Redirect to login page with error message
-                    header('Location: login.php?error=1');
-                    exit();
-                }
-            } elseif ($action === 'signup') {
-                // Process signup request
-                $username = $_POST['username'] ?? '';
-                $email = $_POST['email'] ?? '';
-                $password = $_POST['password'] ?? '';
-                $result = $userController->signup($username, $email, $password);
-                // Check the signup result
-                if ($result === "User created successfully") {
-                    // Redirect to login page with success message
-                    header('Location: login.php?signup=success');
-                    exit();
-                } else {
-                    // Redirect to signup page with error message
-                    header('Location: signup.php?error=1');
-                    exit();
-                }
-            }
+            } 
         } else {
-            // Redirect to login page with error message
-            header('Location: login.php?error=1');
+            header('Location: ./views/login.php');
             exit();
         }
         break;
 
-    case 'admin_login':
-        // If action is related to admin login, route to AdminController
-        require_once('controllers/AdminController.php');
-        $adminController = new AdminController();
-
-        // Handle the admin login request
+    case 'signup':
+        // Start the session
+        //session_start();
+        
+        // User login and signup do not require authentication
+        require_once('controllers/UserController.php');
+        $userController = new UserController();
+        
+         // echo 'Breakdown';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = $_POST['username'] ?? '';
-            $password = $_POST['password'] ?? '';
-            $result = $adminController->login($username, $password);
-            // Check the login result
-            if ($result === "Login successful") {
-                // Redirect to admin dashboard
-                header('Location: admin/dashboard.php');
-                exit();
-            } else {
-                // Redirect to admin login page with error message
-                header('Location: admin_login.php?error=1');
-                exit();
-            }
-        } else {
-            // Redirect to admin login page with error message
-            header('Location: admin_login.php?error=1');
+             $type = $_POST['type'] ?? 'user';
+             $username = $_POST['username'] ?? '';
+             $email = $_POST['email'] ?? '';
+             $password = $_POST['password'] ?? '';
+            
+            //  echo ($type);
+             $result = $userController->signup($type, $username, $email, $password);
+
+             if($result) {
+                if($_SESSION['user_type'] === 'admin') {
+                    header('Location: /views/admin/dashboard');
+                }
+                header('Location: index.php');
+             }
+             
+         } else {
+             // Redirect to signup page if accessed via GET or other methods
+            // header('Location: index.php');
             exit();
         }
         break;
+        
+    case 'logout': 
+        require_once('controllers/UserController.php');
+        $userController = new UserController();
 
-    case 'admin_logout':
-        // If action is related to admin logout, route to AdminController
-        require_once('controllers/AdminController.php');
-        $adminController = new AdminController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $result = $userController->logout();
 
-        // Handle the admin logout request
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $result = $adminController->logout();
-            // Check the logout result
-            if ($result === "Logged out successfully") {
-                // Redirect to admin login page with success message
-                header('Location: admin_login.php?logout=1');
+            // if($result) {
+            //     // header('Location: index.php');
+            //     echo 'test';
+            //     exit();
+            // }
+        }
+
+    case 'update_profile':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require_once('controllers/AdminController.php');
+            $adminController = new AdminController();
+            
+            $id = $_POST['user_id'] ?? '';
+            $type = $_POST['type'] ?? '';
+            $username = $_POST['username'] ?? '';
+            $email = $_POST['email'] ?? '';
+            
+            $result = $adminController->updateProfile($id, $type, $username, $email);
+    
+            // Redirect or display result based on the result of the update
+            if ($result) {
+                header('Location: index.php?action=view_users');
                 exit();
             } else {
-                // Redirect to admin login page with error message
-                header('Location: admin_login.php?error=1');
-                exit();
+                echo $result; // Display error message or handle it
             }
         }
+        break;  
+
+    case 'view_users':
+        // if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            require_once('controllers/AdminController.php');
+            $adminController = new AdminController();
+            $users = $adminController->getUsers(); // Fetch users
+            // echo $users;
+            include('views/admin/view_users.php'); // Include the view
+            break;
+        // }
+
+    case 'delete_user':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require_once('controllers/AdminController.php');
+            $adminController = new AdminController();
+            $id = $_POST['delete_user_id'] ?? '';
+            // echo $id;
+            $result = $adminController->deleteUser($id);
+            echo $result;
+            // if ($result) {
+            //     header('Location: index.php?action=view_users');
+            //     exit();
+            // } else {
+            //     echo "Failed to delete user";
+            // }
+        }
         break;
+        
+        
 
     default:
-        // Handle default action (e.g., display homepage or load login page)
-        // Check if the default action is 'login'
-        if ($action === 'login') {
-            // Load the login page
-            include('views/user/login.php');
+        // Redirect to login page if the user is not logged in
+        if (isUserLoggedIn()) {
+            include('vviews/user/dashboard.php');
+            // header('Location: http://localhost/myMVC/');
+
             exit();
-        } else {
-            // Otherwise, load the homepage
-            include('views/home.php');
-            exit();
+        } elseif (isAdminLoggedIn() && $_SESSION['type'] === 'admin') {
+            // header('Location: http://localhost/myMVC/views/admin/dashboard');
+            include('views/admin/dashboard.php');
         }
+
+        // Otherwise, load the homepage or the default page
+        // include('views/home.php');
+        // echo $_SESSION['user_id'];
+        // header('Location: http://localhost/myMVC/');
+
+        exit();
         break;
 }
-?>
